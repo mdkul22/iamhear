@@ -1,4 +1,4 @@
-lfile = './audio/micchirp_1.wav';
+lfile = './audio/micchirp_3.wav';
 Fs = 44100;
 T = 10;
 [y, Fs] = audioread(lfile);
@@ -33,16 +33,34 @@ clf(1,'reset');
 hold on;
 subplot(6, 1, 1);
 plot(t, mic1, 'red');
+title('Waveform-Mic1')
+xlabel('Time')
+ylabel('Amplitude')
 subplot(6, 1, 2);
 plot(t, mic2, 'green');
+title('Waveform-Mic2')
+xlabel('Time')
+ylabel('Amplitude')
 subplot(6, 1, 3);
 plot(t, mic3, 'blue');
+title('Waveform-Mic3')
+xlabel('Time')
+ylabel('Amplitude')
 subplot(6, 1, 4);
 plot(t, mic4, 'black');
+title('Waveform-Mic4')
+xlabel('Time')
+ylabel('Amplitude')
 subplot(6, 1, 5);
 plot(t, mic5, 'cyan');
+title('Waveform-Mic5')
+xlabel('Time')
+ylabel('Amplitude')
 subplot(6, 1, 6);
 plot(t, mic6, 'yellow');
+title('Waveform-Mic6')
+xlabel('Time')
+ylabel('Amplitude')
 hold off;
 % doing thresholding to find limits
 figure(2);
@@ -80,8 +98,13 @@ plot(t(1, f4:f4+length), mic3(1, f4:f4+length), 'black');
 plot(t(1, f5:f5+length), mic5(1, f5:f5+length), 'cyan');
 %subplot(6,1,6);
 plot(t(1, f6:f6+length), mic6(1, f6:f6+length), 'yellow');
-
+title('Plot of all mics- after thresholding')
+legend({'Mic1','Mic2','Mic3','Mic4','Mic5','Mic6'})
+xlabel('Time')
+ylabel('Amplitude')
 hold off;
+
+
 mic_s=zeros(6,22051);
 mic_s(1,:) = mic1(1, f1:f1+length);
 mic_s(2,:) = mic2(1, f2:f2+length);
@@ -103,10 +126,16 @@ clf(3, 'reset');
 xcor61 = xcorr(mic6, mic1);
 subplot(211);
 plot(xcor61);
+title('Mic1-Correlation')
+xlabel('Time')
+ylabel('Amplitude')
 val61 = find(xcor61 == max(xcor61), 1)/Fs;
 xcor65 = xcorr(mic6, mic5);
 subplot(212);
 plot(xcor65);
+title('Mic5-Correlation')
+xlabel('Time')
+ylabel('Amplitude')
 val65 = find(xcor65 == max(xcor65), 1)/Fs;
 
 
