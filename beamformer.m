@@ -1,5 +1,4 @@
-clear all;
-lfile = 'micchirp.wav';
+lfile = 'micchirp_3.wav';
 Fs = 44100;
 T = 10;
 [y, Fs] = audioread(lfile);
@@ -11,9 +10,10 @@ z4 = transpose(y(:, 4));
 z5 = transpose(y(:, 5));
 z6 = transpose(y(:, 6));
 
-bandPassLow = 1000;
-bandPassHigh = 15000;
-frequency = 8000;
+bandPassLow = 5999;
+frequency = 6000;
+bandPassHigh = 6001;
+
 
 bpFiltFir = designfilt('bandpassiir', 'FilterOrder', 4, ...
     'HalfPowerFrequency1', bandPassLow, 'HalfPowerFrequency2', bandPassHigh, ...
@@ -29,6 +29,7 @@ mic4 = filter(bpFiltFir, z4);
 mic5 = filter(bpFiltFir, z5);
 mic6 = filter(bpFiltFir, z6);
 figure(1);
+clf(1,'reset');
 hold on;
 subplot(6, 1, 1);
 plot(t, mic1, 'red');
@@ -45,8 +46,9 @@ plot(t, mic6, 'yellow');
 hold off;
 % doing thresholding to find limits
 figure(2);
+clf(2, 'reset');
 hold on;
-threshold = 1.2;
+threshold = 0.02;
 length = 22050;
 f1 = find(mic1 > threshold, 1);
 t1 = f1/Fs;
@@ -81,20 +83,32 @@ plot(t(1, f6:f6+length), mic6(1, f6:f6+length), 'yellow');
 
 hold off;
 mic1_s = mic1(1, f1:f1+length);
-mic2_s = mic1(1, f2:f2+length);
-mic3_s = mic1(1, f3:f3+length);
-mic4_s = mic1(1, f4:f4+length);
-mic5_s = mic1(1, f5:f5+length);
-mic6_s = mic1(1, f6:f6+length);
+mic2_s = mic2(1, f2:f2+length);
+mic3_s = mic3(1, f3:f3+length);
+mic4_s = mic4(1, f4:f4+length);
+mic5_s = mic5(1, f5:f5+length);
+mic6_s = mic6(1, f6:f6+length);
 
 angle1 = traditionalCalculation(mic6_s, mic5_s, mic1_s, frequency);
 angle2 = traditionalCalculation(mic3_s, mic2_s, mic4_s, frequency);
-angle3 = traditionalCalculation(mic6_s, mic2_s, mic3_s, frequency);
+angle3 = traditionalCalculation(mic6_s, mic4_s, mic2_s, frequency);
+
+figure(3);
+clf(3, 'reset');
+xcor61 = xcorr(mic6, mic1);
+subplot(211);
+plot(xcor61);
+val61 = find(xcor61 == max(xcor61), 1)/Fs;
+xcor65 = xcorr(mic6, mic5);
+subplot(212);
+plot(xcor65);
+val65 = find(xcor65 == max(xcor65), 1)/Fs;
+
 
 sndspeed = 343;
 angle = (180/pi)*acos(sndspeed*((t6-t5)/(46.3e-3)));
 fprintf("\nThe AoA bearing between 6 and 1 is %f\n\n", angle);
 fprintf("The bearing for 6, 5, 1 is %f degrees\n", angle1*(180/pi));
 fprintf("The bearing for 3, 2, 4 is %f degrees\n", angle2*(180/pi));
-fprintf("The bearing for 6, 4, 3  is %f degrees\n", angle3*(180/pi));
+fprintf("The bearing for 6, 4, 2  is %f degrees\n", angle3*(180/pi));
 
