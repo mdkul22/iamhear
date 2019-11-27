@@ -1,5 +1,5 @@
-lfile = 'micchirp_3.wav';
-Fs = 44100;
+lfile = 'mic15k20k_3.wav';
+Fs = 96000;
 T = 10;
 [y, Fs] = audioread(lfile);
 t = (1/Fs):1/Fs:T;
@@ -10,9 +10,9 @@ z4 = transpose(y(:, 4));
 z5 = transpose(y(:, 5));
 z6 = transpose(y(:, 6));
 
-bandPassLow = 5999;
-frequency = 6000;
-bandPassHigh = 6001;
+bandPassLow = 10000;
+frequency = 12500;
+bandPassHigh = 15000;
 
 
 bpFiltFir = designfilt('bandpassiir', 'FilterOrder', 4, ...
@@ -22,12 +22,19 @@ bpFiltFir = designfilt('bandpassiir', 'FilterOrder', 4, ...
 %                       'CutoffFrequency1', 99.98, 'CutoffFrequency2', ...
 %                       100.02, 'SampleRate', 16000, 'Window', 'hamming');
 
-mic1 = filter(bpFiltFir, z1);
-mic2 = filter(bpFiltFir, z2);
-mic3 = filter(bpFiltFir, z3);
-mic4 = filter(bpFiltFir, z4);
-mic5 = filter(bpFiltFir, z5);
-mic6 = filter(bpFiltFir, z6);
+%mic1 = filter(bpFiltFir, z1);
+%mic2 = filter(bpFiltFir, z2);
+%mic3 = filter(bpFiltFir, z3);
+%mic4 = filter(bpFiltFir, z4);
+%mic5 = filter(bpFiltFir, z5);
+%mic6 = filter(bpFiltFir, z6);
+mic1 = z1;
+mic2 = z2;
+mic3 = z3;
+mic4 = z4;
+mic5 = z5;
+mic6 = z6;
+
 figure(1);
 clf(1,'reset');
 hold on;
@@ -48,7 +55,7 @@ hold off;
 figure(2);
 clf(2, 'reset');
 hold on;
-threshold = 0.02;
+threshold = 0.5;
 length = 22050;
 f1 = find(mic1 > threshold, 1);
 t1 = f1/Fs;
@@ -82,33 +89,41 @@ plot(t(1, f5:f5+length), mic5(1, f5:f5+length), 'cyan');
 plot(t(1, f6:f6+length), mic6(1, f6:f6+length), 'yellow');
 
 hold off;
-mic1_s = mic1(1, f1:f1+length);
-mic2_s = mic2(1, f2:f2+length);
-mic3_s = mic3(1, f3:f3+length);
-mic4_s = mic4(1, f4:f4+length);
-mic5_s = mic5(1, f5:f5+length);
-mic6_s = mic6(1, f6:f6+length);
+% mic1_s = mic1(1, f1:f1+length);
+% mic2_s = mic2(1, f2:f2+length);
+% mic3_s = mic3(1, f3:f3+length);
+% mic4_s = mic4(1, f4:f4+length);
+% mic5_s = mic5(1, f5:f5+length);
+% mic6_s = mic6(1, f6:f6+length);
 
-angle1 = traditionalCalculation(mic6_s, mic5_s, mic1_s, frequency);
-angle2 = traditionalCalculation(mic3_s, mic2_s, mic4_s, frequency);
-angle3 = traditionalCalculation(mic6_s, mic4_s, mic2_s, frequency);
+
 
 figure(3);
 clf(3, 'reset');
-xcor61 = xcorr(mic6, mic1);
-subplot(211);
-plot(xcor61);
-val61 = find(xcor61 == max(xcor61), 1)/Fs;
-xcor65 = xcorr(mic6, mic5);
-subplot(212);
-plot(xcor65);
-val65 = find(xcor65 == max(xcor65), 1)/Fs;
 
+xcor25 = xcorr(mic2, mic5);
+subplot(311);
+plot(xcor25);
+val25 = find(xcor25 == max(xcor25), 1)/Fs - 10;
+
+xcor36 = xcorr(mic3, mic6);
+subplot(312);
+plot(xcor36);
+val36 = find(xcor36 == max(xcor36), 1)/Fs - 10;
+
+xcor13 = xcorr(mic1, mic3);
+subplot(313);
+plot(xcor13);
+val13 = find(xcor13 == max(xcor13), 1)/Fs - 10;
+
+%val12 = t2 - t1;
 
 sndspeed = 343;
-angle = (180/pi)*acos(sndspeed*((t6-t5)/(46.3e-3)));
-fprintf("\nThe AoA bearing between 6 and 1 is %f\n\n", angle);
-fprintf("The bearing for 6, 5, 1 is %f degrees\n", angle1*(180/pi));
-fprintf("The bearing for 3, 2, 4 is %f degrees\n", angle2*(180/pi));
-fprintf("The bearing for 6, 4, 2  is %f degrees\n", angle3*(180/pi));
+angle25 = (180/pi) * acos((sndspeed*val25)/(2*0.0463));
+angle36 = (180/pi) * acos((sndspeed*val36)/(2*0.0463));
+angle13 = (180/pi) * acos((sndspeed*val13)/((sqrt(3))*0.0463));
+fprintf("\nThe Azimuth angle between 2 and 5 is %f\n\n", angle25);
+fprintf("\nThe Azimuth angle between 3 and 6 is %f\n\n", angle36);
+fprintf("\nThe Azimuth angle between 1 and 3 is %f\n\n", angle13);
+
 
