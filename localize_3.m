@@ -1,39 +1,35 @@
-lfile = './audio/micchirp_2.wav';
-Fs = 44100;
+lfile = './audio/mic15k20k_5.wav';
+l2file='./audio/chirp15k20k.wav';
+Fs = 96000;
 T = 10;
 [y, Fs] = audioread(lfile);
+[y1,Fs1]=audioread(l2file);
 t = (1/Fs):1/Fs:T;
-z1 = transpose(y(:, 1));
-z2 = transpose(y(:, 2));
-z3 = transpose(y(:, 3));
-z4 = transpose(y(:, 4));
-z5 = transpose(y(:, 5));
-z6 = transpose(y(:, 6));
-
-bandPassLow = 5999;
-frequency = 6000;
-bandPassHigh = 6001;
-
-
-bpFiltFir = designfilt('bandpassiir', 'FilterOrder', 4, ...
-    'HalfPowerFrequency1', bandPassLow, 'HalfPowerFrequency2', bandPassHigh, ...
-    'SampleRate', Fs);
-%bpFiltFir = designfilt('bandpassfir', 'FilterOrder', 4, ...
-%                       'CutoffFrequency1', 99.98, 'CutoffFrequency2', ...
-%                       100.02, 'SampleRate', 16000, 'Window', 'hamming');
-
-mic1 = filter(bpFiltFir, z1);
-mic2 = filter(bpFiltFir, z2);
-mic3 = filter(bpFiltFir, z3);
-mic4 = filter(bpFiltFir, z4);
-mic5 = filter(bpFiltFir, z5);
-mic6 = filter(bpFiltFir, z6);
-
-[xc,lags] = xcorr(mic4,mic3);
- xc = xc(441000:end);
- lags = lags(441000:end);
-  [val,index] = max(abs(xc));
-  lags(index);
-  theta=(180/pi)*((asin(((lags(index)*340)/0.046)))-((3-1)*(pi/3)));
-disp(theta)
- 
+z=zeros(6,960000);
+z(1,:) = transpose(y(:, 1));
+z(2,:) = transpose(y(:, 2));
+z(3,:) = transpose(y(:, 3));
+z(4,:) = transpose(y(:, 4));
+z(5,:) = transpose(y(:, 5));
+z(6,:) = transpose(y(:, 6));
+tau=zeros(6,1);
+  tau(6)=gccphat(transpose(z(6,:)),(y1),Fs);
+  tau(1)=gccphat(transpose(z(1,:)),(y1),Fs);
+  tau(2)=gccphat(transpose(z(2,:)),(y1),Fs);
+    tau(3)=gccphat(transpose(z(3,:)),(y1),Fs);
+      tau(4)=gccphat(transpose(z(4,:)),(y1),Fs);
+       tau(5)=gccphat(transpose(z(5,:)),(y1),Fs);
+theta=zeros(6,1);
+for i=1:6  
+    if i==6
+ theta(i)=((asin(((abs(tau(6)-tau(1))*340)/0.0463)))-((6-1)*(pi/3)));
+    
+    else
+ theta(i)=((asin(((abs(tau(i)-tau(i+1))*340)/0.0463)))-((i-1)*(pi/3)));
+    end
+end
+sum=0;
+for i=1:6
+    sum=sum+theta(i);
+end
+sum=sum/6.0
