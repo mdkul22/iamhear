@@ -1,19 +1,14 @@
-<<<<<<< HEAD
-lfile = 'mic15k20k_3.wav';
+lfile = 'mic15k20k_2.wav';
 Fs = 96000;
-=======
-lfile = './audio/micchirp_3.wav';
-Fs = 44100;
->>>>>>> 70aada72a6a18136ccd96f483faf31609d7511bf
 T = 10;
 [y, Fs] = audioread(lfile);
 t = (1/Fs):1/Fs:T;
-z1 = transpose(y(:, 1));
-z2 = transpose(y(:, 2));
-z3 = transpose(y(:, 3));
-z4 = transpose(y(:, 4));
-z5 = transpose(y(:, 5));
-z6 = transpose(y(:, 6));
+z1 = y(:, 1);
+z2 = y(:, 2);
+z3 = y(:, 3);
+z4 = y(:, 4);
+z5 = y(:, 5);
+z6 = y(:, 6);
 
 bandPassLow = 10000;
 frequency = 12500;
@@ -79,7 +74,7 @@ figure(2);
 clf(2, 'reset');
 hold on;
 threshold = 0.5;
-length = 22050;
+length = 24000;
 f1 = find(mic1 > threshold, 1);
 t1 = f1/Fs;
 fprintf("The mic 1 has time of arrival at %f seconds \n", t1);
@@ -99,19 +94,17 @@ f6 = find(mic6 > threshold, 1);
 t6 = f6/Fs;
 fprintf("The mic 6 has time of arrival at %f seconds \n", t6);
 %subplot(6,1,1);
-plot(t(1, f1:f1+length), mic1(1, f1:f1+length), 'r');
+plot(t(1, f1:f1+length), mic1(f1:f1+length, 1), 'r');
 %subplot(6,1,2);
-plot(t(1, f2:f2+length), mic2(1, f2:f2+length), 'g');
+plot(t(1, f2:f2+length), mic2(f2:f2+length, 1), 'g');
 %subplot(6,1,3);
-plot(t(1, f3:f3+length), mic3(1, f4:f4+length), 'b');
+plot(t(1, f3:f3+length), mic3(f4:f4+length, 1), 'b');
 %subplot(6,1,4);
-plot(t(1, f4:f4+length), mic3(1, f4:f4+length), 'black');
+plot(t(1, f4:f4+length), mic3(f4:f4+length, 1), 'black');
 %subplot(6,1,5);
-plot(t(1, f5:f5+length), mic5(1, f5:f5+length), 'cyan');
+plot(t(1, f5:f5+length), mic5(f5:f5+length, 1), 'cyan');
 %subplot(6,1,6);
-plot(t(1, f6:f6+length), mic6(1, f6:f6+length), 'yellow');
-title('Plot of all mics- after thresholding')
-legend({'Mic1','Mic2','Mic3','Mic4','Mic5','Mic6'})
+plot(t(1, f6:f6+length), mic6(f6:f6+length, 1), 'yellow');
 xlabel('Time')
 ylabel('Amplitude')
 
@@ -127,23 +120,6 @@ hold off;
 
 figure(3);
 clf(3, 'reset');
-<<<<<<< HEAD
-=======
-xcor61 = xcorr(mic6, mic1);
-subplot(211);
-plot(xcor61);
-title('Mic1-Correlation')
-xlabel('Time')
-ylabel('Amplitude')
-val61 = find(xcor61 == max(xcor61), 1)/Fs;
-xcor65 = xcorr(mic6, mic5);
-subplot(212);
-plot(xcor65);
-title('Mic5-Correlation')
-xlabel('Time')
-ylabel('Amplitude')
-val65 = find(xcor65 == max(xcor65), 1)/Fs;
->>>>>>> 70aada72a6a18136ccd96f483faf31609d7511bf
 
 xcor25 = xcorr(mic2, mic5);
 subplot(311);
@@ -169,5 +145,4 @@ angle13 = (180/pi) * acos((sndspeed*val13)/((sqrt(3))*0.0463));
 fprintf("\nThe Azimuth angle between 2 and 5 is %f\n\n", angle25);
 fprintf("\nThe Azimuth angle between 3 and 6 is %f\n\n", angle36);
 fprintf("\nThe Azimuth angle between 1 and 3 is %f\n\n", angle13);
-
 
